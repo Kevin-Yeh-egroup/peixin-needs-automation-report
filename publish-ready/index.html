@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>佩欣需求分析與 Codex 自動化規劃</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #172126;
+        --muted: #5d6b73;
+        --line: #dbe3e7;
+        --bg: #f7f9f8;
+        --paper: #ffffff;
+        --teal: #166b6b;
+        --green: #3f7d4a;
+        --amber: #b66b13;
+        --red: #b9433d;
+        --violet: #695c9d;
+        --soft-teal: #e2f0ee;
+        --soft-green: #e7f2e4;
+        --soft-amber: #fff1dc;
+        --soft-red: #fde8e6;
+        --soft-violet: #ebe8f6;
+        --shadow: 0 16px 42px rgba(23, 33, 38, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.68;
+      }
+
+      a {
+        color: var(--teal);
+      }
+
+      .page {
+        min-height: 100vh;
+      }
+
+      .hero {
+        background:
+          linear-gradient(120deg, rgba(22, 107, 107, 0.95), rgba(63, 125, 74, 0.88)),
+          linear-gradient(90deg, #166b6b, #3f7d4a);
+        color: #fff;
+        padding: 56px 24px 36px;
+      }
+
+      .wrap {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: 28px;
+        align-items: end;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.25;
+        margin: 0;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 820px;
+        font-size: 44px;
+        font-weight: 800;
+      }
+
+      h2 {
+        font-size: 28px;
+        margin-bottom: 16px;
+      }
+
+      h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .hero p {
+        max-width: 800px;
+        margin: 18px 0 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 18px;
+      }
+
+      .meta-panel {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 8px;
+        padding: 18px;
+        backdrop-filter: blur(12px);
+      }
+
+      .meta-row {
+        display: grid;
+        grid-template-columns: 82px 1fr;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .meta-row:last-child {
+        border-bottom: 0;
+      }
+
+      .meta-label {
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      main {
+        padding: 28px 0 64px;
+      }
+
+      section {
+        background: var(--paper);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 32px 0;
+        margin: 18px 0;
+      }
+
+      section.plain {
+        background: transparent;
+        border: 0;
+      }
+
+      .lead {
+        max-width: 900px;
+        color: var(--muted);
+        font-size: 18px;
+        margin: 0 0 18px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 22px;
+      }
+
+      .metric {
+        min-height: 132px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 34px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      .metric span {
+        color: var(--muted);
+      }
+
+      .system-map {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr 1fr;
+        gap: 16px;
+        align-items: stretch;
+        margin-top: 24px;
+      }
+
+      .map-col {
+        display: grid;
+        gap: 12px;
+      }
+
+      .map-node {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 14px 16px;
+        min-height: 72px;
+      }
+
+      .map-node b {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .map-node span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .map-center {
+        display: grid;
+        place-items: center;
+        min-height: 100%;
+        border-radius: 8px;
+        padding: 22px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--red), var(--amber));
+        box-shadow: var(--shadow);
+      }
+
+      .map-center b {
+        display: block;
+        font-size: 24px;
+        text-align: center;
+      }
+
+      .map-center span {
+        display: block;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.88);
+        text-align: center;
+      }
+
+      .flow-table,
+      .solution-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 13px 14px;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid var(--line);
+      }
+
+      th {
+        background: #eef4f2;
+        color: #223138;
+        font-weight: 700;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .priority-high {
+        color: var(--red);
+        font-weight: 700;
+      }
+
+      .priority-mid {
+        color: var(--amber);
+        font-weight: 700;
+      }
+
+      .priority-low {
+        color: var(--green);
+        font-weight: 700;
+      }
+
+      .layer-diagram {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin: 22px 0 0;
+      }
+
+      .layer {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 20px;
+        position: relative;
+      }
+
+      .layer::before {
+        content: attr(data-step);
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        margin-bottom: 14px;
+        border-radius: 50%;
+        color: #fff;
+        background: var(--teal);
+        font-weight: 800;
+      }
+
+      .layer:nth-child(2)::before {
+        background: var(--amber);
+      }
+
+      .layer:nth-child(3)::before {
+        background: var(--violet);
+      }
+
+      .phase-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      .phase {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 18px;
+      }
+
+      .phase-label {
+        font-weight: 800;
+        color: var(--teal);
+      }
+
+      .phase ul,
+      .experiment ul,
+      .question-list,
+      .guardrails {
+        margin: 8px 0 0;
+        padding-left: 22px;
+      }
+
+      .experiment-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .experiment {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 18px;
+        min-height: 100%;
+      }
+
+      .experiment:nth-child(1) {
+        border-top: 5px solid var(--teal);
+      }
+
+      .experiment:nth-child(2) {
+        border-top: 5px solid var(--amber);
+      }
+
+      .experiment:nth-child(3) {
+        border-top: 5px solid var(--violet);
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .week {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 16px;
+      }
+
+      .week b {
+        display: block;
+        color: var(--teal);
+        margin-bottom: 8px;
+      }
+
+      .callout {
+        border-left: 6px solid var(--red);
+        background: var(--soft-red);
+        padding: 16px 18px;
+        margin: 18px 0 0;
+      }
+
+      .next-box {
+        background: #172126;
+        color: #fff;
+        border-radius: 8px;
+        padding: 22px;
+        margin-top: 18px;
+      }
+
+      .next-box p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      .footer {
+        color: var(--muted);
+        padding: 24px 0 42px;
+        font-size: 14px;
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .system-map,
+        .layer-diagram,
+        .experiment-grid,
+        .timeline {
+          grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .phase {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          border-bottom: 1px solid var(--line);
+        }
+
+        td {
+          border-bottom: 0;
+          padding: 10px 14px;
+        }
+
+        td::before {
+          content: attr(data-label);
+          display: block;
+          color: var(--muted);
+          font-size: 13px;
+          font-weight: 700;
+          margin-bottom: 2px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .hero {
+          padding: 38px 0 28px;
+        }
+
+        .wrap {
+          width: min(100% - 24px, 1120px);
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 29px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+
+        .hero p,
+        .lead {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <h1>佩欣需求分析與 Codex 自動化規劃</h1>
+            <p>把訪談逐字稿中的日常工作拆成流程、痛點、風險與可落地的自動化實驗。建議先做可審閱的每日工作台，再逐步開放寫回與外部發送。</p>
+          </div>
+          <aside class="meta-panel" aria-label="報告資訊">
+            <div class="meta-row">
+              <span class="meta-label">日期</span>
+              <span>2026-05-27</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">狀態</span>
+              <span>Review-stage publish package</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">敏感度</span>
+              <span>Private-preview 建議，不建議未審公開</span>
+            </div>
+          </aside>
+        </div>
+      </header>
+
+      <main>
+        <section class="plain">
+          <div class="wrap">
+            <h2>一句話結論</h2>
+            <p class="lead">佩欣目前不是單純在「填表」或「提醒人」，而是在多個系統之間扮演人工流程中樞：接收表單、檢查資料完整性、轉貼 Line、開行事曆、追課綱與講師資料、核對金額、整理流水帳、通知未完成者、更新 Info、改檔名、維護 Excel 總表。</p>
+            <div class="summary-grid" aria-label="關鍵摘要">
+              <div class="metric">
+                <strong>9</strong>
+                <span>主要工作流需要被拆解與排序</span>
+              </div>
+              <div class="metric">
+                <strong>4</strong>
+                <span>反覆動作：檢查、同步、提醒、格式化</span>
+              </div>
+              <div class="metric">
+                <strong>3</strong>
+                <span>建議自動化層級：工作台、草稿、受控寫回</span>
+              </div>
+              <div class="metric">
+                <strong>2</strong>
+                <span>第一版建議聚焦：課務與核銷</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>可視化需求總覽</h2>
+            <p class="lead">真正的瓶頸在中間那個人工同步點。自動化應先把「今天要看什麼、缺什麼、要通知誰」整理出來。</p>
+            <div class="system-map" aria-label="跨系統工作流地圖">
+              <div class="map-col">
+                <div class="map-node"><b>Google 表單</b><span>課務申請、教材、核銷、季刊、轉介</span></div>
+                <div class="map-node"><b>Line 群組</b><span>派課、提醒、進度追蹤、行政通知</span></div>
+                <div class="map-node"><b>Email / 電話</b><span>單位回覆、課綱需求、地址異動</span></div>
+              </div>
+              <div class="map-center">
+                <b>佩欣人工檢核與追蹤</b>
+                <span>資料完整性、狀態判斷、到期提醒、格式整理</span>
+              </div>
+              <div class="map-col">
+                <div class="map-node"><b>Sheet / Excel / Word</b><span>總表、流水帳、扣繳清單、課綱與會議紀錄</span></div>
+                <div class="map-node"><b>Calendar / Info</b><span>行事曆、事件、評論、送審、完成狀態</span></div>
+                <div class="map-node"><b>淑菁 / Abby / 講師 / 單位</b><span>派課、發票、薪資依據、補件與確認</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>九大工作流拆解</h2>
+            <table class="flow-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>工作流</th>
+                  <th>頻率</th>
+                  <th>主要痛點</th>
+                  <th>自動化優先</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="#">1</td>
+                  <td data-label="工作流">課務 / 客戶申請</td>
+                  <td data-label="頻率">每日</td>
+                  <td data-label="主要痛點">欄位檢查、複製貼上、派課後追課綱、講師資料、簡報與 Calendar。</td>
+                  <td data-label="自動化優先" class="priority-high">最高</td>
+                </tr>
+                <tr>
+                  <td data-label="#">2</td>
+                  <td data-label="工作流">單據核銷</td>
+                  <td data-label="頻率">月初 / 月底</td>
+                  <td data-label="主要痛點">專案分類、公里數費率、金額核對、流水帳與逐人通知。</td>
+                  <td data-label="自動化優先" class="priority-high">最高</td>
+                </tr>
+                <tr>
+                  <td data-label="#">3</td>
+                  <td data-label="工作流">庫存管理</td>
+                  <td data-label="頻率">每日或不定期</td>
+                  <td data-label="主要痛點">教材數量、借出單位、未歸還狀態都靠 Excel 人工記。</td>
+                  <td data-label="自動化優先" class="priority-mid">中</td>
+                </tr>
+                <tr>
+                  <td data-label="#">4</td>
+                  <td data-label="工作流">季刊訂閱</td>
+                  <td data-label="頻率">每日或出刊期</td>
+                  <td data-label="主要痛點">表單資料搬到總表、電子季刊寄送、紙本地址異動與退件整理。</td>
+                  <td data-label="自動化優先" class="priority-mid">中高</td>
+                </tr>
+                <tr>
+                  <td data-label="#">5</td>
+                  <td data-label="工作流">分區會議</td>
+                  <td data-label="頻率">兩個月一次</td>
+                  <td data-label="主要痛點">時段登記、前一天提醒、逐字稿名字校正、會後 Info 欄位檢查。</td>
+                  <td data-label="自動化優先" class="priority-mid">中高</td>
+                </tr>
+                <tr>
+                  <td data-label="#">6</td>
+                  <td data-label="工作流">財務諮詢紀錄</td>
+                  <td data-label="頻率">每日</td>
+                  <td data-label="主要痛點">記錄送審與欄位不同步，補件拖延會影響 15 號發薪依據。</td>
+                  <td data-label="自動化優先" class="priority-high">高</td>
+                </tr>
+                <tr>
+                  <td data-label="#">7</td>
+                  <td data-label="工作流">引導員小老闆日誌 / 郵寄</td>
+                  <td data-label="頻率">每日</td>
+                  <td data-label="主要痛點">寄送日期、狀態欄與完成勾選需要重複更新。</td>
+                  <td data-label="自動化優先" class="priority-mid">中</td>
+                </tr>
+                <tr>
+                  <td data-label="#">8</td>
+                  <td data-label="工作流">粉絲團文章</td>
+                  <td data-label="頻率">每日</td>
+                  <td data-label="主要痛點">建立事件、評論、送審主要是存檔，但每天做很碎。</td>
+                  <td data-label="自動化優先" class="priority-mid">中</td>
+                </tr>
+                <tr>
+                  <td data-label="#">9</td>
+                  <td data-label="工作流">個案轉介與家系圖</td>
+                  <td data-label="頻率">每日 / 不定期</td>
+                  <td data-label="主要痛點">確認資料、開電訪行事曆、回填時間、家系圖改名；個資風險高。</td>
+                  <td data-label="自動化優先" class="priority-mid">中高但需保守</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>三層自動化能力</h2>
+            <div class="layer-diagram">
+              <div class="layer" data-step="1">
+                <h3>每日工作台</h3>
+                <p>讀取各表單與 Excel，整理新申請、缺漏、今日到期、已逾期、需要問人的事項。</p>
+              </div>
+              <div class="layer" data-step="2">
+                <h3>草稿產生器</h3>
+                <p>產生 Line、Email、Calendar、核銷說明、補件提醒、會議紀錄與檔名建議。</p>
+              </div>
+              <div class="layer" data-step="3">
+                <h3>受控寫回</h3>
+                <p>經佩欣確認後才寫回 Sheet、建立 Calendar、寄送信件、操作 Info 或更新狀態欄。</p>
+              </div>
+            </div>
+            <div class="callout">
+              <b>安全邊界：</b>涉及個案、戶籍、財務諮詢、薪資依據、Info 送審與外部發送的動作，不建議無人確認全自動化。
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>Codex 自動化任務規劃</h2>
+            <div class="phase-list">
+              <article class="phase">
+                <div class="phase-label">Phase 0<br>資料盤點</div>
+                <div>
+                  <h3>先看欄位結構，不處理真實外部動作</h3>
+                  <ul>
+                    <li>取得課務、教材、核銷表單的檢視權限。</li>
+                    <li>建立資料字典：欄位、狀態、日期、個資欄位。</li>
+                    <li>整理 Line、Email、核銷、補件與會議提醒模板。</li>
+                  </ul>
+                </div>
+              </article>
+              <article class="phase">
+                <div class="phase-label">Phase 1<br>每日工作台</div>
+                <div>
+                  <h3>每天自動整理「今天要看什麼」</h3>
+                  <ul>
+                    <li>課務新申請、缺漏、待派講師、待開 Calendar。</li>
+                    <li>核銷待核對、缺公里數、金額可能錯誤。</li>
+                    <li>財務諮詢缺欄位、被駁回、逾期未修正。</li>
+                  </ul>
+                </div>
+              </article>
+              <article class="phase">
+                <div class="phase-label">Phase 2<br>草稿產生</div>
+                <div>
+                  <h3>降低複製貼上與重寫訊息的時間</h3>
+                  <ul>
+                    <li>課務申請轉 Line 群組固定格式。</li>
+                    <li>核銷逐人金額說明草稿。</li>
+                    <li>課綱、簡報、財務諮詢補件與會議提醒草稿。</li>
+                  </ul>
+                </div>
+              </article>
+              <article class="phase">
+                <div class="phase-label">Phase 3<br>受控寫回</div>
+                <div>
+                  <h3>草稿穩定後，把低風險動作半自動化</h3>
+                  <ul>
+                    <li>建立 Calendar 事件或更新 Sheet 狀態欄。</li>
+                    <li>季刊電子版寄送與檔案改名，需先確認。</li>
+                    <li>Info、Line、發薪相關狀態維持人工確認。</li>
+                  </ul>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>建議優先做的三個小實驗</h2>
+            <div class="experiment-grid">
+              <article class="experiment">
+                <h3>A. 課務每日追蹤工作台</h3>
+                <p>只接課務 Google Sheet 與教材表單，產出新申請、缺欄位、待派講師、待開 Calendar、課綱與講師資料 due list。</p>
+                <ul>
+                  <li>效益：每天都用，最容易驗證省時。</li>
+                  <li>風險：需要實際欄位與課綱模板。</li>
+                </ul>
+              </article>
+              <article class="experiment">
+                <h3>B. 核銷金額檢查與通知草稿</h3>
+                <p>讀取核銷表單匯出資料，依星展、中信培力、信扶專案、公司課程、辦公室分類，檢查公里數、費率與總金額。</p>
+                <ul>
+                  <li>效益：重複度高，錯誤成本明確。</li>
+                  <li>風險：費率與進位規則要先定稿。</li>
+                </ul>
+              </article>
+              <article class="experiment">
+                <h3>C. 財務諮詢補件追蹤</h3>
+                <p>每天列出哪位諮詢師、哪個案子、缺哪個欄位、拖了幾天、建議提醒文字；先不寫回 Info。</p>
+                <ul>
+                  <li>效益：直接改善補件拖延。</li>
+                  <li>風險：個資敏感，需遮罩與最小權限。</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>可能的解決方案</h2>
+            <table class="solution-table">
+              <thead>
+                <tr>
+                  <th>方案</th>
+                  <th>最適合</th>
+                  <th>優點</th>
+                  <th>限制</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="方案">Google Sheets + Apps Script</td>
+                  <td data-label="最適合">課務、教材、季刊、核銷、Calendar、Gmail</td>
+                  <td data-label="優點">貼近既有 Google 表單工作流，成本低，上手快。</td>
+                  <td data-label="限制">Info、Line、複雜檔案處理不一定能完整處理。</td>
+                </tr>
+                <tr>
+                  <td data-label="方案">Codex 本地半自動工作台</td>
+                  <td data-label="最適合">Excel 檢查、草稿、會議紀錄、檔名整理、核銷檢查</td>
+                  <td data-label="優點">適合先做草稿與報告，不必一開始新建系統。</td>
+                  <td data-label="限制">每天自動跑需要後續排程與權限設計。</td>
+                </tr>
+                <tr>
+                  <td data-label="方案">佩欣工作台 Web 小工具</td>
+                  <td data-label="最適合">長期整合九大工作流</td>
+                  <td data-label="優點">流程狀態清楚，能降低遺漏與追蹤成本。</td>
+                  <td data-label="限制">開發量較大，需要登入、權限、個資遮罩與稽核紀錄。</td>
+                </tr>
+                <tr>
+                  <td data-label="方案">Info 瀏覽器 / RPA 輔助</td>
+                  <td data-label="最適合">Info 無 API 但需要每天查欄位、建事件、送審、截圖</td>
+                  <td data-label="優點">能處理現有系統限制。</td>
+                  <td data-label="限制">畫面變動風險高，個案與發薪狀態必須保留人工確認。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>推薦導入節奏</h2>
+            <div class="timeline" aria-label="四週導入節奏">
+              <div class="week">
+                <b>第 1 週</b>
+                <p>欄位盤點、模板整理、課務每日工作台原型。</p>
+              </div>
+              <div class="week">
+                <b>第 2 週</b>
+                <p>核銷檢查與訊息草稿，修正課務工作台。</p>
+              </div>
+              <div class="week">
+                <b>第 3 週</b>
+                <p>財務諮詢補件追蹤，季刊電子名單整理。</p>
+              </div>
+              <div class="week">
+                <b>第 4 週</b>
+                <p>分區會議紀錄與未更新提醒，評估寫回與發送權限。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>待確認問題</h2>
+            <ol class="question-list">
+              <li>課務表單、教材表單、核銷表單的欄位名稱與實際狀態欄有哪些？</li>
+              <li>各專案交通費費率與進位規則是否固定？星展汽車/機車、中信 5.5 元規則要確認。</li>
+              <li>課綱、講師資料、簡報的標準 due date 是固定規則，還是依單位需求不同？</li>
+              <li>Line 通知目前能否接受「草稿由佩欣貼上」，還是未來希望系統發送？</li>
+              <li>Info 是否有匯出、API、批次匯入或只能人工操作？</li>
+              <li>財務諮詢與個案轉介資料中，哪些欄位可讓 Codex 讀？哪些需要遮罩？</li>
+              <li>季刊電子版是否有固定連結、固定寄送信件模板、退訂機制？</li>
+              <li>家系圖命名格式的完整規則是什麼？</li>
+            </ol>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>發布與治理邊界</h2>
+            <ul class="guardrails">
+              <li>所有外部發送先採草稿模式。</li>
+              <li>涉及個案、戶籍、家系圖、財務諮詢紀錄，先做遮罩與最小權限。</li>
+              <li>涉及薪資、諮詢完成、Info 送審，不做無人確認的全自動點擊。</li>
+              <li>每次自動化輸出都保留來源列號、產生時間、操作人與是否已人工確認。</li>
+              <li>先讓自動化跑 1-2 週，確認沒有漏報、誤報、噪音過多，再考慮寫回或發送。</li>
+            </ul>
+            <div class="next-box">
+              <h3>建議第一個交付版本</h3>
+              <p>先做「課務 + 核銷」雙工作台：每日新申請、缺漏欄位、派課狀態、Calendar 狀態、課綱/簡報/講師資料 due list、依專案分類的核銷檢查、缺件清單與逐人通知草稿。</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="wrap">
+          <p>本頁由 Codex 根據 Kevin 提供的逐字稿與工作紀錄整理。Review-stage package 已設定 noindex；noindex 不是隱私保護，若內容不可被非預期讀者看到，請使用 private preview 或保護式部署。</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
