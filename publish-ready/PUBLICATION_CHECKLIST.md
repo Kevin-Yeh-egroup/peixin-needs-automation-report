@@ -10,13 +10,17 @@
 - [x] Repository pushed to GitHub.
 - [x] Vercel preview deployment created.
 - [x] Deployment content verified through `vercel curl`.
-- [ ] Public unauthenticated Vercel access verified.
+- [x] Vercel production deployment created.
+- [x] Public unauthenticated production alias verified.
 
 ## Published Locations
 
 - GitHub repo: `https://github.com/Kevin-Yeh-egroup/peixin-needs-automation-report`
 - Vercel preview: `https://publish-ready-reyvkhnwv-egroup-task3s-projects.vercel.app`
+- Vercel production alias: `https://publish-ready-eight.vercel.app`
+- Vercel production deployment URL: `https://publish-ready-d7opwktxu-egroup-task3s-projects.vercel.app`
 - Vercel deployment ID: `dpl_DMMCU54U7jCyHV1gCoqFbwynHfnp`
+- Vercel production deployment ID: `dpl_4pDbJvQaoxTGT1P85LiR1jo56RKH`
 - Vercel project ID: `prj_RIfm4vafkmunbz39vDEecJ4DKXPp`
 - Vercel team ID: `team_lOk9yHNRxLRBcdrU9DATWODG`
 
@@ -29,10 +33,13 @@
 ## Verification To Run Before Sharing
 
 - GitHub push completed on `main`.
-- `curl -I -L` returned `401 Unauthorized` for the Vercel preview because the Vercel project/team currently has Vercel Authentication enabled.
-- The response headers include `X-Robots-Tag: noindex`.
+- `curl -I -L https://publish-ready-eight.vercel.app` returned `200 OK`.
+- Production response headers include `X-Robots-Tag: noindex, nofollow, noarchive`.
+- `robots.txt` returns `User-agent: *` and `Disallow: /`.
+- `Invoke-WebRequest` confirmed production HTML contains the report title and `<meta name="robots" content="noindex,nofollow,noarchive">`.
+- `curl -I -L` returned `401 Unauthorized` for the non-aliased preview/deployment URL because Vercel Authentication remains enabled for those URLs.
 - `vercel curl` successfully returned the deployed HTML and confirmed the page contains `<meta name="robots" content="noindex,nofollow,noarchive">`.
-- Public unauthenticated access still requires either changing Vercel Deployment Protection or using a production/public deployment route.
+- Public unauthenticated access should use the production alias, not the protected deployment URL.
 
 ## Approval Gates
 
@@ -41,4 +48,4 @@ Ask Kevin before:
 - sharing a URL externally;
 - removing noindex or changing visibility.
 - changing Vercel Deployment Protection settings;
-- promoting to Vercel production;
+- promoting future changes to Vercel production;

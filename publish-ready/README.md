@@ -25,5 +25,6 @@ These are indexing controls, not access control.
 
 - GitHub public repo: `https://github.com/Kevin-Yeh-egroup/peixin-needs-automation-report`
 - Vercel preview: `https://publish-ready-reyvkhnwv-egroup-task3s-projects.vercel.app`
+- Vercel production alias: `https://publish-ready-eight.vercel.app`
 
-The Vercel preview currently returns Vercel Authentication for unauthenticated requests. The deployment content has been verified through `vercel curl`, but public unauthenticated access requires changing Deployment Protection or using an approved production/public route.
+The Vercel production alias is public and has been verified with `200 OK`, `X-Robots-Tag: noindex, nofollow, noarchive`, `robots.txt` disallow, and the HTML meta robots tag. Preview and non-aliased deployment URLs may still return Vercel Authentication; use the production alias for cross-device viewing.
