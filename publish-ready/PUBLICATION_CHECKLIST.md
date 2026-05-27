@@ -12,15 +12,16 @@
 - [x] Deployment content verified through `vercel curl`.
 - [x] Vercel production deployment created.
 - [x] Public unauthenticated production alias verified.
+- [x] Current-workflow and optimization section added and verified in production.
 
 ## Published Locations
 
 - GitHub repo: `https://github.com/Kevin-Yeh-egroup/peixin-needs-automation-report`
 - Vercel preview: `https://publish-ready-reyvkhnwv-egroup-task3s-projects.vercel.app`
 - Vercel production alias: `https://publish-ready-eight.vercel.app`
-- Vercel production deployment URL: `https://publish-ready-d7opwktxu-egroup-task3s-projects.vercel.app`
+- Vercel production deployment URL: `https://publish-ready-oeh5gt286-egroup-task3s-projects.vercel.app`
 - Vercel deployment ID: `dpl_DMMCU54U7jCyHV1gCoqFbwynHfnp`
-- Vercel production deployment ID: `dpl_4pDbJvQaoxTGT1P85LiR1jo56RKH`
+- Vercel production deployment ID: `dpl_3Yq4ZAXpoNE8YaV4C3LGEVoxtTkU`
 - Vercel project ID: `prj_RIfm4vafkmunbz39vDEecJ4DKXPp`
 - Vercel team ID: `team_lOk9yHNRxLRBcdrU9DATWODG`
 
@@ -37,6 +38,7 @@
 - Production response headers include `X-Robots-Tag: noindex, nofollow, noarchive`.
 - `robots.txt` returns `User-agent: *` and `Disallow: /`.
 - `Invoke-WebRequest` confirmed production HTML contains the report title and `<meta name="robots" content="noindex,nofollow,noarchive">`.
+- `Invoke-WebRequest` confirmed production HTML contains `她現在的工作流程與優化可能`, `目前流程`, and `優化可能`.
 - `curl -I -L` returned `401 Unauthorized` for the non-aliased preview/deployment URL because Vercel Authentication remains enabled for those URLs.
 - `vercel curl` successfully returned the deployed HTML and confirmed the page contains `<meta name="robots" content="noindex,nofollow,noarchive">`.
 - Public unauthenticated access should use the production alias, not the protected deployment URL.
