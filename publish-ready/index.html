@@ -272,6 +272,61 @@
         font-weight: 700;
       }
 
+      .workflow-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .workflow-detail {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 18px;
+        min-height: 100%;
+      }
+
+      .workflow-detail h3 {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .workflow-number {
+        display: inline-grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+        border-radius: 50%;
+        color: #fff;
+        background: var(--teal);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .workflow-block {
+        margin-top: 14px;
+      }
+
+      .workflow-block b {
+        display: block;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .workflow-block p {
+        margin: 0;
+      }
+
+      .workflow-block.optimization {
+        padding: 12px;
+        border-radius: 8px;
+        background: var(--soft-teal);
+      }
+
       .layer-diagram {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -413,6 +468,7 @@
         .hero-grid,
         .system-map,
         .layer-diagram,
+        .workflow-detail-grid,
         .experiment-grid,
         .timeline {
           grid-template-columns: 1fr;
@@ -643,6 +699,122 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <section>
+          <div class="wrap">
+            <h2>她現在的工作流程與優化可能</h2>
+            <p class="lead">這段接在痛點說明後面，讓讀者先看懂佩欣現在怎麼做，再判斷哪些地方最值得先優化。</p>
+            <div class="workflow-detail-grid">
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">1</span>課務 / 客戶申請</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>單位填 Google 表單後，佩欣檢查欄位完整性；完整就整理成固定格式貼到 Line 群組，等 Abby 或淑菁派講師；講師確認後建立 Calendar，再追講師資料、課綱、簡報與單位需求。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>建立新申請、缺漏、待派課、待開行事曆與課綱/簡報 due list，並產生 Line 草稿。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">2</span>單據核銷</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>填表後，佩欣依星展、中信培力、信扶專案、公司課程與辦公室分類；核對公里數、費率、金額與單據；星展另 key 流水帳與扣繳資料，月底/月初再提醒與逐人回覆。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>做核銷檢查器，依專案套費率、標出疑似錯誤與缺件，產生逐人通知草稿。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">3</span>庫存管理</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>佩欣維護 Excel，記錄教材/道具數量、借出日期、活動、借出單位、歸還或未歸還狀態。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>先產生借出、歸還、低庫存、未歸還清單，不急著改原 Excel。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">4</span>季刊訂閱</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>訂閱者透過 QR Code 或 Google 表單登記紙本/電子版；佩欣把資料搬到總表；電子版寄連結，紙本整理地址、續訂、退件與地址異動。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>自動分類電子/紙本，電子版先產生 Email 草稿，地址異動做重複資料比對。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">5</span>分區會議</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>引導員到 Excel 登記時段；會前一天佩欣提醒並給會議連結；會後整理逐字稿、校正名字與狀態，再檢查 Info 欄位，未更新就截圖通知。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>建立會議包：會前提醒、逐字稿校名單、進度表比對、未更新清單與提醒草稿。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">6</span>財務諮詢紀錄</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>諮詢師約訪並填諮詢記錄；Info/評論與欄位常不同步，佩欣要檢查缺漏、駁回原因與補件狀態；都完成後才勾諮詢完成，作為發薪依據。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>補件追蹤清單列出諮詢師、案子、缺欄位、拖延天數與提醒草稿；完成勾選仍人工確認。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">7</span>小老闆日誌 / 郵寄</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>有人填表申請寄送手冊或小老闆資料後，佩欣寄出並在 Google 表單或 Info 補完成狀態與寄送日期。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>列出待寄送、待回填日期、待勾完成清單，低風險狀態欄再評估半自動寫回。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">8</span>粉絲團文章</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>佩欣每天把粉絲團文章存到 Info，建立事件、評論並送審，主要作為紀錄與行政依據。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>建立貼文收件清單與 Info 建檔 checklist，欄位固定後產生貼文摘要與待填草稿。</p>
+                </div>
+              </article>
+
+              <article class="workflow-detail">
+                <h3><span class="workflow-number">9</span>個案轉介與家系圖</h3>
+                <div class="workflow-block">
+                  <b>目前流程</b>
+                  <p>社工或單位填轉介表單並進 Line；佩欣核對資料、安排電訪行事曆、回填 Line 進入時間與電訪時間；家系圖依固定格式改名並存入資料夾。</p>
+                </div>
+                <div class="workflow-block optimization">
+                  <b>優化可能</b>
+                  <p>先做資料完整性與檔名建議，不自動寫回個案資料；Calendar 可做需確認的草稿。</p>
+                </div>
+              </article>
+            </div>
           </div>
         </section>
 
