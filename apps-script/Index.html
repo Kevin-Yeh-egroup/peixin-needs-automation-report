@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <base target="_top">
+    <title>佩欣每日工作台</title>
+    <?!= include('Styles'); ?>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主要導覽">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">P</div>
+          <div>
+            <h1>佩欣工作台</h1>
+            <p>即時讀取 Google Sheet</p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="工作台分頁">
+          <button class="nav-tab is-active" type="button" data-view="dashboard"><span>▦</span>今日總覽</button>
+          <button class="nav-tab" type="button" data-view="course"><span>□</span>課務</button>
+          <button class="nav-tab" type="button" data-view="expense"><span>∑</span>核銷</button>
+          <button class="nav-tab" type="button" data-view="drafts"><span>✎</span>草稿</button>
+          <button class="nav-tab" type="button" data-view="dictionary"><span>#</span>欄位地圖</button>
+        </nav>
+
+        <section class="source-panel">
+          <h2>資料來源</h2>
+          <p>此版本只讀取 Google Sheet，不寫回、不排序、不刪除、不發送通知。</p>
+          <div id="sheet-source-list" class="sheet-source-list"></div>
+          <button id="refresh-button" class="primary-button" type="button">重新讀取最新資料</button>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Live · read-only</p>
+            <h2 id="view-title">今日總覽</h2>
+          </div>
+          <div class="topbar-controls">
+            <label class="search-box">
+              <span aria-hidden="true">⌕</span>
+              <input id="search-input" type="search" placeholder="搜尋單位、請款人、專案、草稿">
+            </label>
+            <div class="status-pill" id="source-status">等待讀取</div>
+          </div>
+        </header>
+
+        <section class="loading-state" id="loading-state">
+          <div class="loader" aria-hidden="true"></div>
+          <strong>正在讀取 Google Sheet</strong>
+          <p>第一次授權後，之後打開就會直接載入最新資料。</p>
+        </section>
+
+        <section class="view is-active" id="view-dashboard" aria-labelledby="view-title">
+          <div class="summary-grid" id="summary-grid"></div>
+          <div class="split-layout">
+            <section class="work-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Priority queue</p>
+                  <h3>今天先處理</h3>
+                </div>
+                <span class="mini-badge" id="priority-count">0</span>
+              </div>
+              <div class="task-list" id="priority-list"></div>
+            </section>
+            <section class="work-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Safety boundary</p>
+                  <h3>讀取邊界</h3>
+                </div>
+              </div>
+              <div class="safety-list">
+                <div><strong>只讀取</strong><span>使用 spreadsheets.readonly 權限</span></div>
+                <div><strong>不寫回</strong><span>沒有 setValue / appendRow / deleteRow</span></div>
+                <div><strong>人工確認</strong><span>草稿由佩欣複製貼上</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="view-course">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Course intake</p>
+              <h3>課務工作台</h3>
+            </div>
+            <div class="segmented">
+              <button class="segment is-active" type="button" data-course-filter="all">全部</button>
+              <button class="segment" type="button" data-course-filter="missing">缺資料</button>
+              <button class="segment" type="button" data-course-filter="assignment">待派課</button>
+              <button class="segment" type="button" data-course-filter="calendar">待確認</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>來源</th>
+                  <th>單位 / 主題</th>
+                  <th>狀態</th>
+                  <th>下一步</th>
+                  <th>草稿</th>
+                </tr>
+              </thead>
+              <tbody id="course-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="view-expense">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Expense checker</p>
+              <h3>核銷檢查器</h3>
+            </div>
+            <div class="segmented">
+              <button class="segment is-active" type="button" data-expense-filter="all">全部</button>
+              <button class="segment" type="button" data-expense-filter="mismatch">金額異常</button>
+              <button class="segment" type="button" data-expense-filter="missing">缺件</button>
+              <button class="segment" type="button" data-expense-filter="travel">交通待查</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>來源</th>
+                  <th>請款 / 專案</th>
+                  <th>檢查結果</th>
+                  <th>金額</th>
+                  <th>草稿</th>
+                </tr>
+              </thead>
+              <tbody id="expense-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="view-drafts">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Draft generator</p>
+              <h3>待複製草稿</h3>
+            </div>
+            <div class="draft-actions">
+              <label class="toggle"><input id="show-ok-drafts" type="checkbox">包含無異常項目</label>
+              <button id="export-report" class="secondary-button" type="button">下載日報</button>
+            </div>
+          </div>
+          <div class="draft-grid" id="draft-grid"></div>
+        </section>
+
+        <section class="view" id="view-dictionary">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Field map</p>
+              <h3>欄位地圖</h3>
+            </div>
+          </div>
+          <div class="dictionary-grid">
+            <section class="work-panel">
+              <h4>課程邀約表單</h4>
+              <div class="field-cloud" id="course-fields"></div>
+            </section>
+            <section class="work-panel">
+              <h4>報帳表單</h4>
+              <div class="field-cloud" id="expense-fields"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <?!= include('Client'); ?>
+  </body>
+</html>

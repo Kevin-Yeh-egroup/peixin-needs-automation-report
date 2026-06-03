@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>佩欣每日工作台原型</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主要導覽">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">P</div>
+          <div>
+            <h1>佩欣工作台</h1>
+            <p>課務與核銷每日檢查</p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="工作台分頁">
+          <button class="nav-tab is-active" type="button" data-view="dashboard" title="今日總覽">
+            <span class="tab-icon" aria-hidden="true">▦</span>
+            今日總覽
+          </button>
+          <button class="nav-tab" type="button" data-view="course" title="課務工作台">
+            <span class="tab-icon" aria-hidden="true">□</span>
+            課務
+          </button>
+          <button class="nav-tab" type="button" data-view="expense" title="核銷檢查器">
+            <span class="tab-icon" aria-hidden="true">∑</span>
+            核銷
+          </button>
+          <button class="nav-tab" type="button" data-view="drafts" title="訊息草稿">
+            <span class="tab-icon" aria-hidden="true">✎</span>
+            草稿
+          </button>
+          <button class="nav-tab" type="button" data-view="dictionary" title="欄位地圖">
+            <span class="tab-icon" aria-hidden="true">#</span>
+            欄位地圖
+          </button>
+        </nav>
+
+        <section class="import-panel" aria-labelledby="import-title">
+          <h2 id="import-title">資料來源</h2>
+          <p>匯出的 CSV 只在瀏覽器內處理；不會寫回表單，也不會外送。</p>
+
+          <div class="sheet-source-list" id="sheet-source-list" aria-label="已綁定 Google Sheets"></div>
+
+          <label class="file-drop">
+            <span>課程邀約 CSV</span>
+            <input id="course-file" type="file" accept=".csv,text/csv">
+          </label>
+
+          <label class="file-drop">
+            <span>報帳表單 CSV</span>
+            <input id="expense-file" type="file" accept=".csv,text/csv">
+          </label>
+
+          <div class="sidebar-actions">
+            <button class="icon-button" id="reset-demo" type="button" title="載入示範資料">
+              <span aria-hidden="true">↺</span>
+              Demo
+            </button>
+            <button class="icon-button" id="export-report" type="button" title="下載 Markdown 日報">
+              <span aria-hidden="true">⇩</span>
+              匯出
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Prototype · read-only</p>
+            <h2 id="view-title">今日總覽</h2>
+          </div>
+          <div class="topbar-controls">
+            <label class="search-box">
+              <span aria-hidden="true">⌕</span>
+              <input id="search-input" type="search" placeholder="搜尋單位、請款人、專案、草稿">
+            </label>
+            <div class="status-pill" id="source-status">示範資料</div>
+          </div>
+        </header>
+
+        <section class="view is-active" id="view-dashboard" aria-labelledby="view-title">
+          <div class="summary-grid" id="summary-grid"></div>
+
+          <div class="split-layout">
+            <section class="work-panel" aria-labelledby="priority-title">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Priority queue</p>
+                  <h3 id="priority-title">今天先處理</h3>
+                </div>
+                <span class="mini-badge" id="priority-count">0</span>
+              </div>
+              <div class="task-list" id="priority-list"></div>
+            </section>
+
+            <section class="work-panel" aria-labelledby="flow-title">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Workflow map</p>
+                  <h3 id="flow-title">原型處理範圍</h3>
+                </div>
+              </div>
+              <div class="workflow-map" aria-label="讀取、檢查、產生草稿、人工確認">
+                <div class="flow-node is-current">
+                  <span>1</span>
+                  <strong>讀取</strong>
+                  <small>CSV / demo</small>
+                </div>
+                <div class="flow-line"></div>
+                <div class="flow-node">
+                  <span>2</span>
+                  <strong>檢查</strong>
+                  <small>缺欄與金額</small>
+                </div>
+                <div class="flow-line"></div>
+                <div class="flow-node">
+                  <span>3</span>
+                  <strong>草稿</strong>
+                  <small>Line / 回覆</small>
+                </div>
+                <div class="flow-line"></div>
+                <div class="flow-node">
+                  <span>4</span>
+                  <strong>確認</strong>
+                  <small>人工貼上</small>
+                </div>
+              </div>
+              <div class="insight-box">
+                <strong>設計邊界</strong>
+                <p>第一版只整理「佩欣今天要看什麼」，不自動發送、不建 Calendar、不改 Google Sheet。每一項都保留來源列號，方便回表單查證。</p>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="view-course" aria-labelledby="course-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Course intake</p>
+              <h3 id="course-title">課務工作台</h3>
+            </div>
+            <div class="segmented" role="tablist" aria-label="課務篩選">
+              <button class="segment is-active" type="button" data-course-filter="all">全部</button>
+              <button class="segment" type="button" data-course-filter="missing">缺資料</button>
+              <button class="segment" type="button" data-course-filter="assignment">待派課</button>
+              <button class="segment" type="button" data-course-filter="calendar">待確認</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>來源</th>
+                  <th>單位 / 主題</th>
+                  <th>狀態</th>
+                  <th>下一步</th>
+                  <th>草稿</th>
+                </tr>
+              </thead>
+              <tbody id="course-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="view-expense" aria-labelledby="expense-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Expense checker</p>
+              <h3 id="expense-title">核銷檢查器</h3>
+            </div>
+            <div class="segmented" role="tablist" aria-label="核銷篩選">
+              <button class="segment is-active" type="button" data-expense-filter="all">全部</button>
+              <button class="segment" type="button" data-expense-filter="mismatch">金額異常</button>
+              <button class="segment" type="button" data-expense-filter="missing">缺件</button>
+              <button class="segment" type="button" data-expense-filter="travel">交通待查</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>來源</th>
+                  <th>請款 / 專案</th>
+                  <th>檢查結果</th>
+                  <th>金額</th>
+                  <th>草稿</th>
+                </tr>
+              </thead>
+              <tbody id="expense-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="view-drafts" aria-labelledby="drafts-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Draft generator</p>
+              <h3 id="drafts-title">待複製草稿</h3>
+            </div>
+            <label class="toggle">
+              <input id="show-ok-drafts" type="checkbox">
+              <span>包含無異常項目</span>
+            </label>
+          </div>
+          <div class="draft-grid" id="draft-grid"></div>
+        </section>
+
+        <section class="view" id="view-dictionary" aria-labelledby="dictionary-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Field map</p>
+              <h3 id="dictionary-title">欄位地圖</h3>
+            </div>
+          </div>
+          <div class="dictionary-grid">
+            <section class="work-panel">
+              <h4>課程邀約表單</h4>
+              <div class="field-cloud" id="course-fields"></div>
+            </section>
+            <section class="work-panel">
+              <h4>報帳表單</h4>
+              <div class="field-cloud" id="expense-fields"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

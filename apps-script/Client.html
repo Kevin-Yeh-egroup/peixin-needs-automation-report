@@ -1,0 +1,351 @@
+<script>
+  const state = {
+    data: null,
+    currentView: 'dashboard',
+    courseFilter: 'all',
+    expenseFilter: 'all',
+    search: '',
+    showOkDrafts: false
+  };
+
+  const elements = {
+    loadingState: document.getElementById('loading-state'),
+    viewTitle: document.getElementById('view-title'),
+    sourceStatus: document.getElementById('source-status'),
+    sheetSourceList: document.getElementById('sheet-source-list'),
+    summaryGrid: document.getElementById('summary-grid'),
+    priorityList: document.getElementById('priority-list'),
+    priorityCount: document.getElementById('priority-count'),
+    courseTable: document.getElementById('course-table'),
+    expenseTable: document.getElementById('expense-table'),
+    draftGrid: document.getElementById('draft-grid'),
+    courseFields: document.getElementById('course-fields'),
+    expenseFields: document.getElementById('expense-fields'),
+    toast: document.getElementById('toast'),
+    search: document.getElementById('search-input'),
+    showOkDrafts: document.getElementById('show-ok-drafts')
+  };
+
+  function loadDashboard() {
+    setLoading(true);
+    if (!window.google || !google.script || !google.script.run) {
+      setLoading(false);
+      elements.sourceStatus.textContent = '需部署為 Apps Script';
+      showToast('請在 Apps Script Web App 中開啟');
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler((payload) => {
+        state.data = payload;
+        setLoading(false);
+        render();
+        showToast('已讀取最新資料');
+      })
+      .withFailureHandler((error) => {
+        setLoading(false);
+        elements.sourceStatus.textContent = '讀取失敗';
+        showToast(error && error.message ? error.message : '讀取失敗');
+      })
+      .getDashboardData({ courseLimit: 300, expenseLimit: 600 });
+  }
+
+  function setLoading(isLoading) {
+    elements.loadingState.classList.toggle('is-visible', isLoading);
+    document.getElementById('refresh-button').disabled = isLoading;
+  }
+
+  function filteredData() {
+    if (!state.data) return { course: [], expense: [] };
+    const query = state.search.trim().toLowerCase();
+    const course = state.data.course.rows.filter((item) => {
+      return !query || `${item.searchText} ${item.draft}`.toLowerCase().includes(query);
+    });
+    const expense = state.data.expense.rows.filter((item) => {
+      return !query || `${item.searchText} ${item.draft}`.toLowerCase().includes(query);
+    });
+    return { course, expense };
+  }
+
+  function render() {
+    if (!state.data) return;
+    const { course, expense } = filteredData();
+    const all = [...course, ...expense];
+    const riskItems = all.filter((item) => item.severity !== 'ok');
+
+    elements.sourceStatus.textContent = `已讀取 ${state.data.generatedAt}`;
+    renderSheetSources(state.data.sources);
+    renderSummary(course, expense);
+    renderPriority(riskItems);
+    renderCourse(filterCourse(course));
+    renderExpense(filterExpense(expense));
+    renderDrafts(all);
+    renderDictionary();
+  }
+
+  function renderSheetSources(sources) {
+    elements.sheetSourceList.innerHTML = sources.map((source) => `
+      <article class="sheet-source-card">
+        <header>
+          <div>
+            <strong>${escapeHtml(source.label)}表單</strong>
+            <small>${escapeHtml(source.sheetName)} · ${source.rows.toLocaleString('zh-TW')} 列 / ${source.columns} 欄</small>
+          </div>
+          <span class="tag info">${escapeHtml(source.label)}</span>
+        </header>
+        <small>${escapeHtml(source.title)}</small>
+        <small>本次載入最新 ${source.loadedRows.toLocaleString('zh-TW')} 筆</small>
+        <div class="source-links">
+          <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer noopener">開啟</a>
+          <a class="source-link" href="${source.csvUrl}" target="_blank" rel="noreferrer noopener">CSV</a>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function renderSummary(course, expense) {
+    const courseMissing = course.filter((item) => item.missing.length).length;
+    const courseAssignment = course.filter((item) => item.tags.some((tag) => tag.label.includes('待派'))).length;
+    const expenseIssues = expense.filter((item) => item.severity !== 'ok').length;
+    const metrics = [
+      { label: '課務筆數', value: course.length, tone: '', ratio: course.length ? 88 : 0 },
+      { label: '課務缺資料', value: courseMissing, tone: courseMissing ? 'is-warning' : '', ratio: ratio(courseMissing, course.length) },
+      { label: '待派講師', value: courseAssignment, tone: courseAssignment ? 'is-warning' : '', ratio: ratio(courseAssignment, course.length) },
+      { label: '核銷需處理', value: expenseIssues, tone: expenseIssues ? 'is-danger' : '', ratio: ratio(expenseIssues, expense.length) }
+    ];
+
+    elements.summaryGrid.innerHTML = metrics.map((metric) => `
+      <article class="metric-card ${metric.tone}">
+        <span>${escapeHtml(metric.label)}</span>
+        <strong>${metric.value}</strong>
+        <div class="meter" aria-hidden="true"><i style="width:${metric.ratio}%"></i></div>
+      </article>
+    `).join('');
+  }
+
+  function ratio(valueCount, total) {
+    if (!total) return 0;
+    return Math.max(7, Math.min(100, Math.round((valueCount / total) * 100)));
+  }
+
+  function renderPriority(items) {
+    const priority = items
+      .slice()
+      .sort((a, b) => severityRank(a.severity) - severityRank(b.severity))
+      .slice(0, 10);
+    elements.priorityCount.textContent = String(priority.length);
+    elements.priorityList.innerHTML = priority.length
+      ? priority.map((item) => `
+        <article class="task-item ${item.severity === 'danger' ? 'is-danger' : 'is-warning'}">
+          <div>
+            <strong>${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.source)} · ${escapeHtml(item.nextSteps[0] || item.subtitle)}</p>
+          </div>
+          ${renderTags(item.tags.slice(0, 2))}
+        </article>
+      `).join('')
+      : '<div class="empty-state">目前沒有需要優先處理的項目。</div>';
+  }
+
+  function filterCourse(items) {
+    if (state.courseFilter === 'missing') return items.filter((item) => item.missing.length);
+    if (state.courseFilter === 'assignment') return items.filter((item) => item.tags.some((tag) => tag.label.includes('待派')));
+    if (state.courseFilter === 'calendar') return items.filter((item) => item.tags.some((tag) => tag.label.includes('Calendar') || tag.label.includes('授課')));
+    return items;
+  }
+
+  function filterExpense(items) {
+    if (state.expenseFilter === 'mismatch') return items.filter((item) => Math.abs(item.diff) >= 1);
+    if (state.expenseFilter === 'missing') return items.filter((item) => item.missing.length || item.tags.some((tag) => tag.label.includes('缺單據')));
+    if (state.expenseFilter === 'travel') return items.filter((item) => item.tags.some((tag) => tag.label.includes('行程')));
+    return items;
+  }
+
+  function renderCourse(items) {
+    elements.courseTable.innerHTML = items.length
+      ? items.map((item) => `
+        <tr>
+          <td class="source-ref">${escapeHtml(item.source)}</td>
+          <td class="primary-cell"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></td>
+          <td>${renderTags(item.tags)}</td>
+          <td>${item.nextSteps.map((step) => `<div>${escapeHtml(step)}</div>`).join('')}</td>
+          <td><button class="copy-button" type="button" data-copy="${encodeURIComponent(item.draft)}">複製</button></td>
+        </tr>
+      `).join('')
+      : '<tr><td colspan="5" class="empty-state">沒有符合條件的課務資料。</td></tr>';
+  }
+
+  function renderExpense(items) {
+    elements.expenseTable.innerHTML = items.length
+      ? items.map((item) => `
+        <tr>
+          <td class="source-ref">${escapeHtml(item.source)}</td>
+          <td class="primary-cell"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></td>
+          <td>${renderTags(item.tags)}<div>${item.nextSteps.map((step) => `<div>${escapeHtml(step)}</div>`).join('')}</div></td>
+          <td class="money">表單 ${formatMoney(item.total)}<br>明細 ${formatMoney(item.detailSum)}</td>
+          <td><button class="copy-button" type="button" data-copy="${encodeURIComponent(item.draft)}">複製</button></td>
+        </tr>
+      `).join('')
+      : '<tr><td colspan="5" class="empty-state">沒有符合條件的核銷資料。</td></tr>';
+  }
+
+  function renderDrafts(items) {
+    const drafts = items.filter((item) => state.showOkDrafts || item.severity !== 'ok');
+    elements.draftGrid.innerHTML = drafts.length
+      ? drafts.map((item) => `
+        <article class="draft-card">
+          <header>
+            <div>
+              <p class="eyebrow">${escapeHtml(item.source)}</p>
+              <h4>${escapeHtml(item.title)}</h4>
+            </div>
+            <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.draft)}">複製</button>
+          </header>
+          ${renderTags(item.tags.slice(0, 3))}
+          <pre>${escapeHtml(item.draft)}</pre>
+        </article>
+      `).join('')
+      : '<div class="empty-state">目前沒有待處理草稿。勾選右上方可顯示無異常項目。</div>';
+  }
+
+  function renderDictionary() {
+    elements.courseFields.innerHTML = (state.data.course.headers || []).map(renderField).join('');
+    elements.expenseFields.innerHTML = (state.data.expense.headers || []).map(renderField).join('');
+  }
+
+  function renderField(header) {
+    const sensitiveWords = ['姓名', '電話', 'Email', '電子郵件', '請款人', '經手人', '地址', '抬頭', '統編'];
+    const statusWords = ['講師安排', '助教安排', '授課日期時段', '建檔備註', '指派規劃師', '總計', '單據數量', '專案類別'];
+    const className = [
+      'field-chip',
+      sensitiveWords.some((word) => header.includes(word)) ? 'is-sensitive' : '',
+      statusWords.some((word) => header.includes(word)) ? 'is-status' : ''
+    ].filter(Boolean).join(' ');
+    return `<span class="${className}">${escapeHtml(header)}</span>`;
+  }
+
+  function renderTags(tags) {
+    return `<div class="tag-row">${tags.map((tag) => `<span class="tag ${tag.type}">${escapeHtml(tag.label)}</span>`).join('')}</div>`;
+  }
+
+  function severityRank(severity) {
+    if (severity === 'danger') return 0;
+    if (severity === 'warning') return 1;
+    return 2;
+  }
+
+  function showView(name) {
+    state.currentView = name;
+    document.querySelectorAll('.view').forEach((view) => view.classList.remove('is-active'));
+    document.getElementById(`view-${name}`).classList.add('is-active');
+    document.querySelectorAll('.nav-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.view === name));
+    const titles = { dashboard: '今日總覽', course: '課務工作台', expense: '核銷檢查器', drafts: '訊息草稿', dictionary: '欄位地圖' };
+    elements.viewTitle.textContent = titles[name] || '今日總覽';
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('已複製草稿');
+    } catch (_error) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+      showToast('已複製草稿');
+    }
+  }
+
+  function exportReport() {
+    const { course, expense } = filteredData();
+    const riskItems = [...course, ...expense].filter((item) => item.severity !== 'ok');
+    const lines = [
+      '# 佩欣每日工作台',
+      '',
+      `產生時間：${state.data.generatedAt}`,
+      '資料來源：即時 Google Sheet 讀取',
+      '',
+      '## 今日摘要',
+      '',
+      `- 課務筆數：${course.length}`,
+      `- 課務缺資料：${course.filter((item) => item.missing.length).length}`,
+      `- 核銷需處理：${expense.filter((item) => item.severity !== 'ok').length}`,
+      `- 優先處理：${riskItems.length}`,
+      '',
+      '## 優先處理',
+      '',
+      ...riskItems.flatMap((item) => [
+        `### ${item.source} ${item.title}`,
+        '',
+        `- 狀態：${item.tags.map((tag) => tag.label).join('、')}`,
+        `- 下一步：${item.nextSteps.join('；')}`,
+        '',
+        '```text',
+        item.draft,
+        '```',
+        ''
+      ])
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `peixin-live-workbench-${new Date().toISOString().slice(0, 10)}.md`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    showToast('已下載 Markdown 日報');
+  }
+
+  function showToast(message) {
+    elements.toast.textContent = message;
+    elements.toast.classList.add('is-visible');
+    window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(() => elements.toast.classList.remove('is-visible'), 2400);
+  }
+
+  function escapeHtml(input) {
+    return String(input || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatMoney(amount) {
+    return `$${Math.round(Number(amount) || 0).toLocaleString('zh-TW')}`;
+  }
+
+  document.querySelectorAll('.nav-tab').forEach((tab) => tab.addEventListener('click', () => showView(tab.dataset.view)));
+  document.querySelectorAll('[data-course-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.courseFilter = button.dataset.courseFilter;
+      document.querySelectorAll('[data-course-filter]').forEach((item) => item.classList.toggle('is-active', item === button));
+      render();
+    });
+  });
+  document.querySelectorAll('[data-expense-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      state.expenseFilter = button.dataset.expenseFilter;
+      document.querySelectorAll('[data-expense-filter]').forEach((item) => item.classList.toggle('is-active', item === button));
+      render();
+    });
+  });
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-copy]');
+    if (button) copyText(decodeURIComponent(button.dataset.copy));
+  });
+  document.getElementById('refresh-button').addEventListener('click', loadDashboard);
+  document.getElementById('export-report').addEventListener('click', exportReport);
+  elements.search.addEventListener('input', (event) => {
+    state.search = event.target.value;
+    render();
+  });
+  elements.showOkDrafts.addEventListener('change', (event) => {
+    state.showOkDrafts = event.target.checked;
+    render();
+  });
+
+  loadDashboard();
+</script>
