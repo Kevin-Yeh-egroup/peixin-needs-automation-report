@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>佩欣九大工作流流程表</title>
+    <style>
+      :root {
+        --ink: #172126;
+        --muted: #5d6a70;
+        --line: #d9e1e4;
+        --paper: #f6f8f7;
+        --white: #fff;
+        --teal: #1e6b6e;
+        --green: #2e7d32;
+        --amber: #b86b00;
+        --red: #b3261e;
+        --blue: #235a9f;
+        --soft-teal: #e7f1f1;
+        --soft-amber: #fff3df;
+        --soft-red: #fff0ed;
+        --shadow: 0 10px 28px rgba(23, 33, 38, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+        line-height: 1.75;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        width: min(100% - 36px, 1120px);
+        margin: 0 auto;
+      }
+
+      header {
+        background: #172126;
+        color: #fff;
+        padding: 52px 0 36px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        margin-bottom: 24px;
+        color: rgba(255, 255, 255, 0.82);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.25;
+      }
+
+      h1 {
+        max-width: 820px;
+        font-size: clamp(34px, 5vw, 56px);
+      }
+
+      .subtitle {
+        max-width: 860px;
+        margin: 18px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 18px;
+      }
+
+      main {
+        padding: 28px 0 48px;
+      }
+
+      section {
+        margin: 20px 0;
+        padding: 28px 0;
+      }
+
+      .panel,
+      .workflow {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        box-shadow: var(--shadow);
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .lead {
+        max-width: 880px;
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .record-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 20px;
+      }
+
+      .record-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        background: #fbfcfc;
+      }
+
+      .record-card b {
+        display: block;
+        color: var(--teal);
+        margin-bottom: 6px;
+      }
+
+      .toc {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .toc a {
+        display: block;
+        min-height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 10px 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .workflow {
+        overflow: hidden;
+      }
+
+      .workflow + .workflow {
+        margin-top: 18px;
+      }
+
+      .workflow-head {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfc;
+      }
+
+      .number {
+        display: inline-grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        color: #fff;
+        background: var(--teal);
+        font-weight: 800;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        border-radius: 999px;
+        padding: 0 12px;
+        background: var(--soft-teal);
+        color: var(--teal);
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .tag.warn {
+        background: var(--soft-amber);
+        color: var(--amber);
+      }
+
+      .tag.risk {
+        background: var(--soft-red);
+        color: var(--red);
+      }
+
+      .workflow-body {
+        padding: 20px;
+      }
+
+      .check-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .check-box {
+        border-left: 5px solid var(--teal);
+        background: #f8fbfb;
+        padding: 12px 14px;
+      }
+
+      .check-box.warn {
+        border-color: var(--amber);
+        background: var(--soft-amber);
+      }
+
+      .check-box.risk {
+        border-color: var(--red);
+        background: var(--soft-red);
+      }
+
+      .check-box b {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 13px;
+        letter-spacing: 0;
+        background: #f4f7f7;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .status {
+        font-weight: 800;
+      }
+
+      .status.auto {
+        color: var(--green);
+      }
+
+      .status.review {
+        color: var(--amber);
+      }
+
+      .status.stop {
+        color: var(--red);
+      }
+
+      .note {
+        border-left: 6px solid var(--blue);
+        background: #eef5ff;
+        padding: 16px 18px;
+        margin-top: 18px;
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 18px 0 42px;
+      }
+
+      @media (max-width: 920px) {
+        .record-grid,
+        .toc,
+        .check-row {
+          grid-template-columns: 1fr;
+        }
+
+        .workflow-head {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .workflow-head .tag {
+          grid-column: 1 / -1;
+          justify-self: start;
+        }
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          border-bottom: 1px solid var(--line);
+          padding: 10px 0;
+        }
+
+        td {
+          border: 0;
+          padding: 7px 0;
+        }
+
+        td::before {
+          content: attr(data-label);
+          display: block;
+          color: var(--muted);
+          font-size: 13px;
+          font-weight: 800;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .wrap {
+          width: min(100% - 24px, 1120px);
+        }
+
+        header {
+          padding: 38px 0 28px;
+        }
+
+        h1 {
+          font-size: 30px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+
+        .workflow-body,
+        .workflow-head,
+        .panel {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <a class="back-link" href="../../">回到佩欣自動化報告</a>
+        <h1>佩欣九大工作流流程表</h1>
+        <p class="subtitle">這份底稿記錄目前與 Kevin 討論到的流程、缺漏提醒、可自動化位置，以及必須由佩欣確認後才寫回或對外送出的邊界。</p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="wrap panel">
+          <h2>共通細項紀錄規則</h2>
+          <p class="lead">所有流程都要留下細項紀錄，之後才能跟佩欣逐項對照，不只是看結果是否完成。</p>
+          <div class="record-grid">
+            <div class="record-card">
+              <b>來源定位</b>
+              <span>記錄 Sheet 名稱、分頁、列號、表單回覆時間、附件或外部來源。</span>
+            </div>
+            <div class="record-card">
+              <b>判斷理由</b>
+              <span>標出為何被判定缺資料、錯誤、逾期、待確認或可進下一步。</span>
+            </div>
+            <div class="record-card">
+              <b>佩欣確認</b>
+              <span>任何修改、通知、Calendar、Info、薪資依據，都需保留確認人與確認時間。</span>
+            </div>
+            <div class="record-card">
+              <b>寫回證據</b>
+              <span>若有回填 Sheet 或建立行事曆，需記錄欄位、更新值、事件 ID 與備註。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap panel">
+          <h2>流程索引</h2>
+          <div class="toc" aria-label="九大工作流索引">
+            <a href="#course">1. 課務及客戶申請</a>
+            <a href="#reimbursement">2. 單據核銷</a>
+            <a href="#inventory">3. 庫存管理</a>
+            <a href="#subscription">4. 季刊訂閱</a>
+            <a href="#regional-meeting">5. 分區會議</a>
+            <a href="#consulting">6. 財務諮詢紀錄</a>
+            <a href="#mailing">7. 小老闆日誌 / 郵寄</a>
+            <a href="#posts">8. 粉絲團文章</a>
+            <a href="#case-transfer">9. 確認資料 / 電訪 / 家系圖</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="wrap">
+          <article class="workflow" id="course">
+            <div class="workflow-head">
+              <span class="number">1</span>
+              <div>
+                <h2>課務及客戶申請</h2>
+                <p class="lead">核心是把新課程申請、缺漏資料、派課草稿、Calendar 與課綱/簡報/講師資料追蹤串起來。</p>
+              </div>
+              <span class="tag">每日檢查</span>
+            </div>
+            <div class="workflow-body">
+              <div class="check-row">
+                <div class="check-box">
+                  <b>已知來源</b>
+                  <span>課務及客戶申請 Google Sheet。</span>
+                </div>
+                <div class="check-box warn">
+                  <b>待確認</b>
+                  <span>課程多久前必須提供課綱、簡報、講師資料與單位需求。</span>
+                </div>
+                <div class="check-box risk">
+                  <b>安全邊界</b>
+                  <span>不直接改原始表單，不直接對外通知，先提醒佩欣確認。</span>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">讀取新申請</td>
+                    <td data-label="工作台可做">每天讀 Sheet，列出新列、課程時間、單位、聯絡人、需求欄位。</td>
+                    <td data-label="佩欣要確認">欄位定義與哪些列算新申請。</td>
+                    <td data-label="狀態" class="status auto">可自動整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">缺資料提醒</td>
+                    <td data-label="工作台可做">分類中缺資料的部分提醒佩欣，包含課程資訊、聯絡資訊、教材、講師資料、課綱或簡報。</td>
+                    <td data-label="佩欣要確認">缺漏清單是否要修改原 Sheet 或先請申請人補件。</td>
+                    <td data-label="狀態" class="status review">需確認後處理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">派課內容草稿</td>
+                    <td data-label="工作台可做">產生佩欣要貼給素菁與 Ivy 的課務內容，這是草稿產生器提示詞與格式模板。</td>
+                    <td data-label="佩欣要確認">貼文內容、收件對象、是否要送出。</td>
+                    <td data-label="狀態" class="status review">草稿先行</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">Agent 回覆寫回</td>
+                    <td data-label="工作台可做">Agent prompt 取得回覆後，可整理成待寫回欄位，由 Codex 協助輸入 Google Sheet。</td>
+                    <td data-label="佩欣要確認">回覆內容與要寫回的欄位。</td>
+                    <td data-label="狀態" class="status review">受控寫回</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">派課後 Calendar</td>
+                    <td data-label="工作台可做">確認派課後，依派課資料建立行事曆，備註放課程細節、講師、地點、聯絡資訊與追蹤事項。</td>
+                    <td data-label="佩欣要確認">派課已成立與事件內容。</td>
+                    <td data-label="狀態" class="status review">可半自動</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">課綱 / 簡報 / 講師資料</td>
+                    <td data-label="工作台可做">到期前提醒佩欣，可嘗試用馴錢師課務測試 agent 取得或生成草稿，再列入待確認。</td>
+                    <td data-label="佩欣要確認">生成內容是否可用，以及正式期限規則。</td>
+                    <td data-label="狀態" class="status review">需人工審稿</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="reimbursement">
+            <div class="workflow-head">
+              <span class="number">2</span>
+              <div>
+                <h2>單據核銷</h2>
+                <p class="lead">核心是檢查錯誤、缺單據、金額與專案分類，錯誤時提醒佩欣是否要修改。</p>
+              </div>
+              <span class="tag">月底 / 月初</span>
+            </div>
+            <div class="workflow-body">
+              <div class="check-row">
+                <div class="check-box">
+                  <b>已知來源</b>
+                  <span>單據核銷 Google Sheet。</span>
+                </div>
+                <div class="check-box warn">
+                  <b>待確認</b>
+                  <span>附件單據目前是否另存在 Drive、Line、Email 或其他欄位。</span>
+                </div>
+                <div class="check-box risk">
+                  <b>安全邊界</b>
+                  <span>不直接通知申請人，不直接改金額，先產出疑似錯誤清單。</span>
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">讀取核銷列</td>
+                    <td data-label="工作台可做">依日期、姓名、專案、交通、里程、金額、備註建立待核對清單。</td>
+                    <td data-label="佩欣要確認">哪些欄位是判斷依據。</td>
+                    <td data-label="狀態" class="status auto">可自動整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">錯誤偵測</td>
+                    <td data-label="工作台可做">檢查專案分類、公里數、費率、金額格式、重複申請、異常高額。</td>
+                    <td data-label="佩欣要確認">是否真的錯，是否要修改。</td>
+                    <td data-label="狀態" class="status review">提醒佩欣</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">單據回傳</td>
+                    <td data-label="工作台可做">比對應有單據與目前可見附件，標出缺單據或單據不清楚。</td>
+                    <td data-label="佩欣要確認">附件來源與補件方式。</td>
+                    <td data-label="狀態" class="status review">需補來源</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">逐人說明草稿</td>
+                    <td data-label="工作台可做">依人整理本月核銷、疑似錯誤與缺件提醒草稿。</td>
+                    <td data-label="佩欣要確認">訊息是否送出及內容是否改寫。</td>
+                    <td data-label="狀態" class="status review">草稿先行</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="inventory">
+            <div class="workflow-head">
+              <span class="number">3</span>
+              <div>
+                <h2>庫存管理</h2>
+                <p class="lead">先向佩欣取得目前統計用 Excel，再做低庫存、借出未歸還、活動需求與盤點差異檢查。</p>
+              </div>
+              <span class="tag warn">需先取檔</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">取得 Excel</td>
+                    <td data-label="工作台可做">先列需求清單，請佩欣提供目前統計用 Excel 與欄位說明。</td>
+                    <td data-label="佩欣要確認">最新檔案位置與可讀取權限。</td>
+                    <td data-label="狀態" class="status review">前置必要</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">庫存檢查</td>
+                    <td data-label="工作台可做">讀取品項、現有量、借出量、歸還日、活動需求，列出低庫存與異常。</td>
+                    <td data-label="佩欣要確認">低庫存門檻與品項名稱規則。</td>
+                    <td data-label="狀態" class="status auto">取得檔後可做</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">未歸還提醒</td>
+                    <td data-label="工作台可做">整理逾期未歸還、借出單位、借出人與提醒草稿。</td>
+                    <td data-label="佩欣要確認">是否通知與通知對象。</td>
+                    <td data-label="狀態" class="status review">草稿先行</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="subscription">
+            <div class="workflow-head">
+              <span class="number">4</span>
+              <div>
+                <h2>季刊訂閱</h2>
+                <p class="lead">第一步是確認目前訂閱名單資料來源，再做紙本/電子、地址異動、退件與重複訂閱整理。</p>
+              </div>
+              <span class="tag warn">需問來源</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">資料來源盤點</td>
+                    <td data-label="工作台可做">詢問目前訂閱名單來自 Google Form、Sheet、Info、Email 或手動總表。</td>
+                    <td data-label="佩欣要確認">哪一份是正式名單。</td>
+                    <td data-label="狀態" class="status review">前置必要</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">名單整理</td>
+                    <td data-label="工作台可做">分類紙本/電子、續訂、退訂、地址異動、重複登記。</td>
+                    <td data-label="佩欣要確認">分類規則與重複資料怎麼保留。</td>
+                    <td data-label="狀態" class="status auto">可自動整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">寄送草稿</td>
+                    <td data-label="工作台可做">電子版產生 Email 草稿，紙本整理地址標籤與待確認清單。</td>
+                    <td data-label="佩欣要確認">寄送前內容與收件名單。</td>
+                    <td data-label="狀態" class="status review">不可直接寄</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="regional-meeting">
+            <div class="workflow-head">
+              <span class="number">5</span>
+              <div>
+                <h2>分區會議</h2>
+                <p class="lead">有 Google Sheet 記錄登記內容，工作台可依每位引導員登記時間建立行事曆草稿。</p>
+              </div>
+              <span class="tag">有登記表</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">讀取登記</td>
+                    <td data-label="工作台可做">讀取分區會議 Google Sheet，整理引導員、分區、登記時間、會議連結與狀態。</td>
+                    <td data-label="佩欣要確認">正式表單連結與欄位。</td>
+                    <td data-label="狀態" class="status auto">可自動整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">新增行事曆</td>
+                    <td data-label="工作台可做">依引導員登記時間建立 Calendar 事件草稿，備註列分區、會議連結、提醒事項。</td>
+                    <td data-label="佩欣要確認">是否建立、放在哪個 Calendar、是否邀請他人。</td>
+                    <td data-label="狀態" class="status review">需確認後建立</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">會後追蹤</td>
+                    <td data-label="工作台可做">整理逐字稿、校正名字、Info 欄位未更新與提醒草稿。</td>
+                    <td data-label="佩欣要確認">哪些未更新要截圖通知。</td>
+                    <td data-label="狀態" class="status review">草稿先行</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="consulting">
+            <div class="workflow-head">
+              <span class="number">6</span>
+              <div>
+                <h2>財務諮詢紀錄</h2>
+                <p class="lead">重點是檢查缺欄位、駁回、逾期未修正與發薪風險，但完成與薪資仍需人工確認。</p>
+              </div>
+              <span class="tag risk">高敏感</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">欄位檢查</td>
+                    <td data-label="工作台可做">整理諮詢師、個案、缺欄位、駁回原因、拖延天數與補件狀態。</td>
+                    <td data-label="佩欣要確認">缺漏判斷是否正確。</td>
+                    <td data-label="狀態" class="status auto">只讀整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">提醒草稿</td>
+                    <td data-label="工作台可做">產生補件提醒與回覆草稿，不直接送出。</td>
+                    <td data-label="佩欣要確認">訊息、對象、時機。</td>
+                    <td data-label="狀態" class="status review">草稿先行</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">發薪風險</td>
+                    <td data-label="工作台可做">標出可能影響薪資的未完成紀錄。</td>
+                    <td data-label="佩欣要確認">是否真的可列薪資依據。</td>
+                    <td data-label="狀態" class="status stop">不可自動決定</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="mailing">
+            <div class="workflow-head">
+              <span class="number">7</span>
+              <div>
+                <h2>小老闆日誌 / 郵寄</h2>
+                <p class="lead">這部分有 Google Sheet 記錄登記內容，可整理待寄、已寄、待回填與缺資料清單。</p>
+              </div>
+              <span class="tag">有登記表</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">讀取登記</td>
+                    <td data-label="工作台可做">讀 Sheet，整理申請人、地址、數量、寄送需求、是否已寄。</td>
+                    <td data-label="佩欣要確認">正式表單與欄位。</td>
+                    <td data-label="狀態" class="status auto">可自動整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">待寄清單</td>
+                    <td data-label="工作台可做">列出待寄、地址缺漏、重複申請、待回填寄送日期。</td>
+                    <td data-label="佩欣要確認">是否寄出與寄送日期。</td>
+                    <td data-label="狀態" class="status review">需人工確認</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">狀態回填</td>
+                    <td data-label="工作台可做">佩欣確認後可協助回填 Sheet 狀態、寄送日期與備註。</td>
+                    <td data-label="佩欣要確認">回填內容。</td>
+                    <td data-label="狀態" class="status review">受控寫回</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="posts">
+            <div class="workflow-head">
+              <span class="number">8</span>
+              <div>
+                <h2>粉絲團文章到 InfoCenter</h2>
+                <p class="lead">目前是從 Line 上大家登記的文章放到 InfoCenter，目標其實是保存文章並作為派薪依據。</p>
+              </div>
+              <span class="tag warn">機制可優化</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">Line 登記</td>
+                    <td data-label="工作台可做">短期可整理 Line 登記內容，長期建議改成 Google Form/Sheet 作為正式收件簿。</td>
+                    <td data-label="佩欣要確認">哪個來源才是薪資依據。</td>
+                    <td data-label="狀態" class="status review">需定規則</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">文章保存</td>
+                    <td data-label="工作台可做">建立文章連結、作者、日期、主題、截圖或存檔狀態清單。</td>
+                    <td data-label="佩欣要確認">保存格式與是否需進 InfoCenter。</td>
+                    <td data-label="狀態" class="status auto">可整理</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">InfoCenter 建檔</td>
+                    <td data-label="工作台可做">產生 InfoCenter 建檔 checklist 與欄位草稿。</td>
+                    <td data-label="佩欣要確認">送審、事件、評論與薪資依據是否成立。</td>
+                    <td data-label="狀態" class="status review">不可全自動</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">派薪依據</td>
+                    <td data-label="工作台可做">標記可疑缺漏、重複、未存檔、未送審或未達規則。</td>
+                    <td data-label="佩欣要確認">最終是否可派薪。</td>
+                    <td data-label="狀態" class="status stop">不可自動決定</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="workflow" id="case-transfer">
+            <div class="workflow-head">
+              <span class="number">9</span>
+              <div>
+                <h2>確認資料、開電訪行事曆、回填時間、家系圖改名</h2>
+                <p class="lead">第九個工作的核心是四件事：確認資料、開電訪行事曆、回填時間、家系圖改名。個資敏感度高，先做輔助與草稿。</p>
+              </div>
+              <span class="tag risk">個資高敏感</span>
+            </div>
+            <div class="workflow-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步驟</th>
+                    <th>工作台可做</th>
+                    <th>佩欣要確認</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="步驟">確認資料</td>
+                    <td data-label="工作台可做">檢查轉介資料是否缺欄位、格式錯誤、聯絡資訊不完整、家系圖附件缺失。</td>
+                    <td data-label="佩欣要確認">是否要求補件或修正。</td>
+                    <td data-label="狀態" class="status auto">只讀檢查</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">開電訪行事曆</td>
+                    <td data-label="工作台可做">依確認資料產生 Calendar 草稿，備註包含轉介來源、案名代碼、電話、待確認事項。</td>
+                    <td data-label="佩欣要確認">時間、標題、備註與 Calendar 位置。</td>
+                    <td data-label="狀態" class="status review">需確認後建立</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">回填時間</td>
+                    <td data-label="工作台可做">建立待回填清單，將 Line 進入時間與電訪時間整理成可寫回欄位。</td>
+                    <td data-label="佩欣要確認">實際時間與寫回位置。</td>
+                    <td data-label="狀態" class="status review">受控寫回</td>
+                  </tr>
+                  <tr>
+                    <td data-label="步驟">家系圖改名</td>
+                    <td data-label="工作台可做">依規則產生新檔名建議，檢查個案代碼、日期、姓名遮蔽或版本。</td>
+                    <td data-label="佩欣要確認">檔名規則與是否執行改名。</td>
+                    <td data-label="狀態" class="status review">先給建議</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="note">
+                <b>補充：</b>若之後要加入資料夾移動或歸檔，應列為輔助步驟，不覆蓋這四個核心動作。
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">Review-stage noindex page. Last updated: 2026-06-03.</div>
+    </footer>
+  </body>
+</html>
